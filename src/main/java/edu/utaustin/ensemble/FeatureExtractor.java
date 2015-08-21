@@ -17,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
+import java.io.StringReader;
 
 import javax.xml.parsers.*;
 
@@ -215,49 +217,112 @@ public class FeatureExtractor {
 //	}
 	
 	public void buildQueryLines(String file_name){
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
+//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//		DocumentBuilder builder = null;
+//		try {
+//			builder = factory.newDocumentBuilder();
+//		} catch (ParserConfigurationException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//		Document document = null;
+//		try {
+//			document = builder.parse(new File(file_name));
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			System.exit(1);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+//		Element root = document.getDocumentElement();
+//		NodeList nList = document.getElementsByTagName("query");
+//		for (int temp = 0; temp < nList.getLength(); temp++)
+//		{
+//		 Node node = nList.item(temp);
+//		 System.out.println("");    //Just a separator
+//		 if (node.getNodeType() == Node.ELEMENT_NODE)
+//		 {
+//		    //Print each employee's detail
+//		    Element eElement = (Element) node;
+////		    System.out.println("Employee id : "    + eElement.getAttribute("id"));
+////		    System.out.println("First Name : "  + eElement.getElementsByTagName("firstName").item(0).getTextContent());
+////		    System.out.println("Last Name : "   + eElement.getElementsByTagName("lastName").item(0).getTextContent());
+////		    System.out.println("Location : "    + eElement.getElementsByTagName("location").item(0).getTextContent());
+////		    System.out.println("Employee id : "    + eElement.getAttribute("id"));
+////		    System.out.println("First Name : "  + eElement.getElementsByTagName("docid").item(0).getTextContent());
+//		    query_lines.put(eElement.getAttribute("id"), eElement.getElementsByTagName("docid").item(0).getTextContent());
+//		 }
+//		}
+////		System.exit(1);
+
+//		String xml = IOUtils.readFileToString(new File(file_name));
+
+//		String xml = "<message>HELLO!</message>";
+
+		String xml = null;
 		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-		}
-		Document document = null;
-		try {
-			document = builder.parse(new File(file_name));
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
+			xml = readFile(file_name);
+			xml = xml.replaceAll("&\\s+", "&amp;");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
-		Element root = document.getDocumentElement();
-		NodeList nList = document.getElementsByTagName("query");
-		for (int temp = 0; temp < nList.getLength(); temp++)
-		{
-		 Node node = nList.item(temp);
-		 System.out.println("");    //Just a separator
-		 if (node.getNodeType() == Node.ELEMENT_NODE)
-		 {
-		    //Print each employee's detail
-		    Element eElement = (Element) node;
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = null;
+		try {
+			db = dbf.newDocumentBuilder();
+			InputSource is = new InputSource();
+			is.setCharacterStream(new StringReader(xml));
+			try {
+				Document doc = db.parse(is);
+//				String message = doc.getDocumentElement().getTextContent();
+//				System.out.println(message);
+				Element root = doc.getDocumentElement();
+				NodeList nList = doc.getElementsByTagName("query");
+				for (int temp = 0; temp < nList.getLength(); temp++) {
+					Node node = nList.item(temp);
+					System.out.println("");    //Just a separator
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						//Print each employee's detail
+						Element eElement = (Element) node;
 //		    System.out.println("Employee id : "    + eElement.getAttribute("id"));
 //		    System.out.println("First Name : "  + eElement.getElementsByTagName("firstName").item(0).getTextContent());
 //		    System.out.println("Last Name : "   + eElement.getElementsByTagName("lastName").item(0).getTextContent());
 //		    System.out.println("Location : "    + eElement.getElementsByTagName("location").item(0).getTextContent());
 //		    System.out.println("Employee id : "    + eElement.getAttribute("id"));
 //		    System.out.println("First Name : "  + eElement.getElementsByTagName("docid").item(0).getTextContent());
-		    query_lines.put(eElement.getAttribute("id"), eElement.getElementsByTagName("docid").item(0).getTextContent());
-		 }
+						query_lines.put(eElement.getAttribute("id"), eElement.getElementsByTagName("docid").item(0).getTextContent());
+					}
+				}
+			} catch (SAXException e) {
+				// handle SAXException
+			} catch (IOException e) {
+				// handle IOException
+			}
+		} catch (ParserConfigurationException e1) {
+			// handle ParserConfigurationException
 		}
-//		System.exit(1);
+
 	}
-	
+
+	private String readFile( String file ) throws IOException {
+		BufferedReader reader = new BufferedReader( new FileReader (file));
+		String         line = null;
+		StringBuilder  stringBuilder = new StringBuilder();
+		String         ls = System.getProperty("line.separator");
+
+		while( ( line = reader.readLine() ) != null ) {
+			stringBuilder.append( line );
+			stringBuilder.append( ls );
+		}
+
+		return stringBuilder.toString();
+	}
+
 	public boolean findInDoc(String doc_id, Integer start, Integer end, String value){
 		String base_name = "D:\\ProjectData\\data\\";
 		String file_name;
