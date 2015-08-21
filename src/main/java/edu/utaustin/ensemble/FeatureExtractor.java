@@ -598,12 +598,12 @@ public class FeatureExtractor {
 //					System.out.println(findInDoc(prov.get(mp1key), start, end, mp1key.split("~")[2]));
 					
 					//feature:value_in_provenance
-					if(findInDoc(prov.get(mp1key), start, end, mp1key.split("~")[2])){
-						confs.add(1.0);
-					}
-					else {
-						confs.add(0.0);
-					}
+//					if(findInDoc(prov.get(mp1key), start, end, mp1key.split("~")[2])){
+//						confs.add(1.0);
+//					}
+//					else {
+//						confs.add(0.0);
+//					}
 					
 					//confs.add((double)query_docs);
 					fextractions_confs.put(mp1key, confs);
@@ -642,7 +642,7 @@ public class FeatureExtractor {
 		bfeatures.write("@attribute query_doc_overlap numeric\n");
 		
 		//feature:value_in_provenance
-		bfeatures.write("@attribute value_in_provenance numeric\n");
+//		bfeatures.write("@attribute value_in_provenance numeric\n");
 		
 		bfeatures.write("@attribute num_offset numeric\n");
 //		bfeatures.write("@attribute rel {per:cities_of_residence,per:employee_or_member_of,per:age,org:date_founded,per:schools_attended,org:alternate_names,org:top_members_employees,org:member_of,org:shareholders,org:parents,org:subsidiaries,per:siblings,per:spouse,per:title,per:countries_of_residence,per:country_of_birth,per:alternate_names,per:parents,org:founded_by,org:country_of_headquarters,org:city_of_headquarters,org:date_dissolved,per:statesorprovinces_of_residence,per:stateorprovince_of_death,per:city_of_death,per:city_of_birth,per:stateorprovince_of_birth,org:members,per:children,per:cause_of_death,org:stateorprovince_of_headquarters,per:charges,org:website,per:religion,per:country_of_death,per:other_family,per:date_of_death,org:number_of_employees_members,per:date_of_birth,per:origin,org:political_religious_affiliation}\n");
